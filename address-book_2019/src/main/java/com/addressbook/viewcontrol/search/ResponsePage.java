@@ -38,7 +38,7 @@ public class ResponsePage extends WebPage{
 		person=new ContactPerson();
 		
 		add(new Label("msg", new Model<String>(UserSession.getInstance().getUser().getEmail())));
-		
+		loadAddress();
 		addForm(person);	
 		
 		
@@ -59,7 +59,7 @@ public class ResponsePage extends WebPage{
 			
 			add(errorFeedBackPanel);
 			add(succesFeedBackPanel);
-	        Form<?> form = new Form<>("form");
+	        Form<?> form = new Form<>("contactForm");
 	        form.add(new TextField<String>("namePlace",new PropertyModel<String>(person,"namePerson")));
 			form.add(new TextField<String>("emailPlace",new PropertyModel<String>(person,"emailAdd")));
 			form.add(new TextField<String>("phonePlace",new PropertyModel<String>(person,"phoneNumber")));
@@ -81,6 +81,14 @@ public class ResponsePage extends WebPage{
 	        add(form);
 	        return form;
 	    }
+	 
+	 private void loadAddress() {
+		 if(listAddress==null) {
+			 listAddress = new ListModel<>();
+			//listAddress.getObject().set(0, new Address("hello","567489"));
+		 }
+		 
+	    }
 	
 	private void addAddressElements(Form<?> form) {
         form.add(new ListView<Address>("addPlace", listAddress) {
@@ -98,9 +106,11 @@ public class ResponsePage extends WebPage{
 	
 	private void addAddress(ListItem<Address> address) {
         IModel<Address> addressModel = address.getModel();
+        addressModel.setObject(new Address("Texas", "3456"));
+        //address.add(new TextField<String>("place", new PropertyModel<>(addressModel, "addressLine")));
+        //address.add(new TextField<String>("pincode", new PropertyModel<>(addressModel, "pincode")));
         
-        address.add(new TextField<String>("place", new PropertyModel<>(addressModel, "addressLine")));
-        address.add(new TextField<String>("pincode", new PropertyModel<>(addressModel, "addressLine")));
+        
     }
 	
 	private void addSubmitButton(Form<?> form) {

@@ -19,7 +19,7 @@ public class ContactPerson extends ModelBase implements Serializable{
 		// TODO Auto-generated constructor stub
 	}
 	
-	public ContactPerson(String namePerson, String phoneNumber, String emailAdd) {
+	public ContactPerson(String namePerson, String phoneNumber, String emailAdd, List<Address> address ) {
 		// TODO Auto-generated constructor stub
 		this.namePerson=namePerson;
 		this.phoneNumber=phoneNumber;
