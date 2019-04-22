@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html xmlns:wicket="htp:/wicket.apache.org">
+<head>
+<meta charset="ISO-8859-1">
+<title>Sign Up</title>
+<!-- <link rel = "stylesheet"
+   type = "text/css"
+   href = "/src/main/webapp/SignUpDesign.css" /> -->
+</head>
+<body>
+<form wicket:id="formSignUp" style="border:1px solid #ccc">
+  <div class="container">
+    <h1>Sign Up</h1>
+    <p>Please fill in this form to create an account.</p>
+    <hr>
+
+    <label for="email"><b>Email</b></label>
+    <input type="text" placeholder="Enter Email" name="email" wicket:id="emailId" required>
+
+    <label for="psw"><b>Password</b></label>
+    <input type="password" placeholder="Enter Password" name="psw" wicket:id="password" required>
+
+    <label for="psw-repeat"><b>Repeat Password</b></label>
+    <input type="password" placeholder="Repeat Password" name="psw-repeat" wicket:id="cpassword" required>
+
+  
+
+    <div class="clearfix">
+      <button type="submit" class="signupbtn" wicket:id="signUpSubmit">Sign Up</button>
+    </div>
+  </div>
+</form>
+
+</body>
+</html>

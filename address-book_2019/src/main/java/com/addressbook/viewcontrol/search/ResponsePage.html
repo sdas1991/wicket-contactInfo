@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html xmlns:wicket="htp:/wicket.apache.org">
+<head>
+<meta charset="ISO-8859-1">
+<title>Search Page</title>
+</head>
+<body>
+<span style="color: green" wicket:id="succes"> </span>
+<span style="color: red" wicket:id="feedback"></span>
+<div>
+<h1>Welcome:<span wicket:id="msg"></span></h1>
+
+<form wicket:id="contactForm" style="border:1px solid #ccc">
+
+<label class="name"><b>Name</b></label>
+<input type="text" placeholder="Enter Name"  wicket:id="namePlace" required><br/>
+
+<label class="email"><b>Email</b></label>
+<input type="text" placeholder="Enter Email"  wicket:id="emailPlace" required><br/>
+
+<label class="ph"><b>Phone Number</b></label>
+<input type="text" placeholder="Enter Phone Number"  wicket:id="phonePlace" required><br/>
+
+<label class="add"><b>Address</b></label>
+<input type="text" placeholder="Enter Address"  wicket:id="addPlace" required><br/>
+
+<input type="submit"  value="addbutton"/>
+<a wicket:id="signOut" >SignOut</a>
+</form>
+</div>
+
+
+
+</body>
+</html>

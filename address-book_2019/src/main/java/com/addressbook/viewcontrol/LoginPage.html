@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html xmlns:wicket="htp:/wicket.apache.org">
+<head>
+<meta charset="ISO-8859-1">
+<title>LogIn</title>
+</head>
+<body>
+<div class="col-4"></div>
+<div>
+<h1>LogIn</h1>
+</div>
+
+<form wicket:id="form">
+<div class="form-group">
+	<label> UserName</label>
+	<input  type="text" wicket:id="userName" placeholder="Enter your user name" />
+	
+</div>
+<div class="form-group">
+	<label for="fname"> Password</label>
+	
+	<input  type="password" placeholder="Enter your password" wicket:id="pswd"/>
+	
+</div>
+
+<input type="submit" wicket:id="submitLog" />
+
+</form>
+
+</body>
+</html>
