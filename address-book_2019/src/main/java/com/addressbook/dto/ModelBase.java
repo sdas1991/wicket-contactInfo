@@ -1,7 +1,13 @@
 package com.addressbook.dto;
 
-public class ModelBase {
+import java.io.Serializable;
+
+public class ModelBase implements Serializable{
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 6890686528047545077L;
 	private boolean isValidModel;
 
 	public boolean isValidModel() {

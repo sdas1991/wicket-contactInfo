@@ -1,6 +1,7 @@
 package com.addressbook.dto;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 public class User extends ModelBase implements Serializable{
@@ -18,6 +19,9 @@ public class User extends ModelBase implements Serializable{
 	
 	
 	public List<ContactPerson> getContactPerson() {
+		if(contactPerson==null) {
+			contactPerson=new ArrayList<ContactPerson>();
+		}
 		return contactPerson;
 	}
 	public void setContactPerson(List<ContactPerson> contactPerson) {
