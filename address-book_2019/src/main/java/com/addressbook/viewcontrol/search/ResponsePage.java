@@ -1,6 +1,9 @@
 package com.addressbook.viewcontrol.search;
 
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.wicket.feedback.FeedbackMessage;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.basic.Label;
@@ -45,7 +48,7 @@ public class ResponsePage extends WebPage{
 	}
 	 private void addForm(ContactPerson person) {
 	        Form<?> form = createForm(person);
-	        addAddressElements(form );
+	        
 	        addSubmitButton(form);
 	    }
 	 
@@ -60,6 +63,7 @@ public class ResponsePage extends WebPage{
 			add(errorFeedBackPanel);
 			add(succesFeedBackPanel);
 	        Form<?> form = new Form<>("contactForm");
+	        addAddressElements(form);
 	        form.add(new TextField<String>("namePlace",new PropertyModel<String>(person,"namePerson")));
 			form.add(new TextField<String>("emailPlace",new PropertyModel<String>(person,"emailAdd")));
 			form.add(new TextField<String>("phonePlace",new PropertyModel<String>(person,"phoneNumber")));
@@ -85,13 +89,16 @@ public class ResponsePage extends WebPage{
 	 private void loadAddress() {
 		 if(listAddress==null) {
 			 listAddress = new ListModel<>();
-			//listAddress.getObject().set(0, new Address("hello","567489"));
+			 List<Address> aditionadd=new ArrayList<>();
+			 aditionadd.add(new Address("Texas", "3456"));
+			 listAddress.setObject(aditionadd);
+			
 		 }
 		 
 	    }
 	
 	private void addAddressElements(Form<?> form) {
-        form.add(new ListView<Address>("addPlace", listAddress) {
+        form.add(new ListView<Address>("add-place", listAddress) {
 
 
 			@Override
@@ -106,9 +113,11 @@ public class ResponsePage extends WebPage{
 	
 	private void addAddress(ListItem<Address> address) {
         IModel<Address> addressModel = address.getModel();
-        addressModel.setObject(new Address("Texas", "3456"));
-        //address.add(new TextField<String>("place", new PropertyModel<>(addressModel, "addressLine")));
-        //address.add(new TextField<String>("pincode", new PropertyModel<>(addressModel, "pincode")));
+        
+       // addressModel.setObject(new Address("Texas", "3456"));
+       
+        address.add(new TextField<String>("place", new PropertyModel<>(addressModel, "addressLine")));
+        address.add(new TextField<String>("pincode", new PropertyModel<>(addressModel, "pincode")));
         
         
     }
