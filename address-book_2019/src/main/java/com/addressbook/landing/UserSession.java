@@ -1,4 +1,4 @@
-package com.addressbook.viewcontrol;
+package com.addressbook.landing;
 
 import org.apache.wicket.Session;
 import org.apache.wicket.protocol.http.WebSession;

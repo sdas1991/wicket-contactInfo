@@ -1,4 +1,4 @@
-package com.addressbook.viewcontrol;
+package com.addressbook.landing;
 
 import org.apache.wicket.Page;
 import org.apache.wicket.ajax.AjaxRequestTarget;

@@ -1,4 +1,4 @@
-package com.addressbook.viewcontrol;
+package com.addressbook.landing;
 
 import java.awt.Label;
 
@@ -13,16 +13,17 @@ import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 
 import com.addressbook.dto.User;
-import com.addressbook.viewcontrol.search.ResponsePage;
+import com.addressbook.search.ResponsePage;
 
 public class SignUp extends WebPage{
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 488568181178862465L;
+	private final User user;
 
 	public SignUp(final PageParameters parameters) {
-		final User user=new User();
+		user=new User();
 		Form<Object> form=new Form<Object>("formSignUp");
 		form.add(new TextField<String>("emailId",new PropertyModel<String>(user,"email")));
 		final PasswordTextField password = new PasswordTextField("password",

@@ -1,44 +1,18 @@
-package com.addressbook.dto;
+package com.addresbook.dao;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
-
-public class ContactPerson extends ModelBase implements Serializable{
+public class ContactPersonDAO extends ModelDAO{
 	
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -1879372893218034336L;
 	private String id;
 	private String namePerson;
 	private String phoneNumber;
 	private String emailAdd;
-	
-	
-	public ContactPerson() {
-		// TODO Auto-generated constructor stub
-		
-	}
-	
-	public ContactPerson(String namePerson, String phoneNumber, String emailAdd) {
-		// TODO Auto-generated constructor stub
-		super();
-		this.namePerson=namePerson;
-		this.phoneNumber=phoneNumber;
-		this.emailAdd=emailAdd;
-		
-		
-	}
-	
+	private String isPurged;
 	public String getId() {
 		return id;
 	}
-
 	public void setId(String id) {
 		this.id = id;
 	}
-
 	public String getNamePerson() {
 		return namePerson;
 	}
@@ -57,6 +31,14 @@ public class ContactPerson extends ModelBase implements Serializable{
 	public void setEmailAdd(String emailAdd) {
 		this.emailAdd = emailAdd;
 	}
+	public String getIsPurged() {
+		return isPurged;
+	}
+	public void setIsPurged(String isPurged) {
+		this.isPurged = isPurged;
+	}
+	
+	
 	
 	
 	

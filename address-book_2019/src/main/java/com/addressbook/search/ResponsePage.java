@@ -1,4 +1,4 @@
-package com.addressbook.viewcontrol.search;
+package com.addressbook.search;
 
 
 import java.util.ArrayList;
@@ -10,6 +10,7 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.TextField;
+import org.apache.wicket.markup.html.link.BookmarkablePageLink;
 import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
@@ -19,13 +20,13 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.util.ListModel;
+import org.apache.wicket.request.mapper.parameter.PageParameters;
 
 
-import com.addressbook.dto.Address;
 import com.addressbook.dto.ContactPerson;
 import com.addressbook.errorhandling.ErrorFilter;
-import com.addressbook.viewcontrol.LoginPage;
-import com.addressbook.viewcontrol.UserSession;
+import com.addressbook.landing.LoginPage;
+import com.addressbook.landing.UserSession;
 
 public class ResponsePage extends WebPage{
 	
@@ -34,27 +35,37 @@ public class ResponsePage extends WebPage{
 	 */
 	private static final long serialVersionUID = 2788311229442360682L;
 	private ContactPerson person;
-	private ListModel<Address> listAddress;
+	private  Form<?> form;
+	
+	
+	private String searchString;
 
 	public ResponsePage() {
 		
 		person=new ContactPerson();
 		
+		
 		add(new Label("msg", new Model<String>(UserSession.getInstance().getUser().getEmail())));
-		loadAddress();
+		
+		
 		addForm(person);	
 		
 		
 	}
 	 private void addForm(ContactPerson person) {
-	        Form<?> form = createForm(person);
+	        form = createForm(person);
+	        
 	        
 	        addSubmitButton(form);
+	        add(form);
 	    }
 	 
-	 private Form<?> createForm(ContactPerson person) {
+	 @SuppressWarnings({ "unchecked", "rawtypes" })
+	private Form<?> createForm(ContactPerson person) {
 	       // add(new FeedbackPanel("feedback"));
 		 
+		 
+		 Form<?> form = new Form<>("search-form");
 		 FeedbackPanel errorFeedBackPanel = new FeedbackPanel("feedback",
 					new ErrorFilter(FeedbackMessage.ERROR));
 			FeedbackPanel succesFeedBackPanel = new FeedbackPanel("succes",
@@ -62,12 +73,14 @@ public class ResponsePage extends WebPage{
 			
 			add(errorFeedBackPanel);
 			add(succesFeedBackPanel);
-	        Form<?> form = new Form<>("contactForm");
-	        addAddressElements(form);
-	        form.add(new TextField<String>("namePlace",new PropertyModel<String>(person,"namePerson")));
-			form.add(new TextField<String>("emailPlace",new PropertyModel<String>(person,"emailAdd")));
-			form.add(new TextField<String>("phonePlace",new PropertyModel<String>(person,"phoneNumber")));
-			form.add(new Link<String>("signOut") {
+	        
+	        
+	        add(new TextField("searchString",
+	                  new PropertyModel(this, "searchString")));
+	        add(new BookmarkablePageLink("addContact",
+	                  AddContact.class));
+			
+	        form.add(new Link<String>("signOut") {
 				/**
 				 * 
 				 */
@@ -82,52 +95,28 @@ public class ResponsePage extends WebPage{
 				}
 				
 			});
-	        add(form);
+	        
 	        return form;
 	    }
 	 
-	 private void loadAddress() {
-		 if(listAddress==null) {
-			 listAddress = new ListModel<>();
-			 List<Address> aditionadd=new ArrayList<>();
-			 aditionadd.add(new Address("Texas", "3456"));
-			 listAddress.setObject(aditionadd);
-			
-		 }
-		 
-	    }
+	 
+	 
+	 public String getSearchString() {
+		return searchString;
+	}
+	public void setSearchString(String searchString) {
+		this.searchString = searchString;
+	}
 	
-	private void addAddressElements(Form<?> form) {
-        form.add(new ListView<Address>("add-place", listAddress) {
-
-
-			@Override
-			protected void populateItem(ListItem<Address> item) {
-				// TODO Auto-generated method stub
-				addAddress(item);
-				
-			}
-
-        });
-    }
-	
-	private void addAddress(ListItem<Address> address) {
-        IModel<Address> addressModel = address.getModel();
-        
-       // addressModel.setObject(new Address("Texas", "3456"));
-       
-        address.add(new TextField<String>("place", new PropertyModel<>(addressModel, "addressLine")));
-        address.add(new TextField<String>("pincode", new PropertyModel<>(addressModel, "pincode")));
-        
-        
-    }
 	
 	private void addSubmitButton(Form<?> form) {
         form.add(new Button("submit") {
 
             @Override
             public void onSubmit() {
-                System.out.println(person.getEmailAdd());
+            	PageParameters params = new PageParameters();
+                params.add("searchString", getSearchString());
+                setResponsePage(ContactPage.class, params);
             }
 
         });

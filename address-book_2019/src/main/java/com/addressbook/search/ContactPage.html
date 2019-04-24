@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html xmlns:wicket="htp:/wicket.apache.org">
+<head>
+<meta charset="ISO-8859-1">
+<title>Insert title here</title>
+</head>
+<body>
+
+<div wicket:id="modalWindow"></div>
+<div wicket:id="contacts" class="contact">
+    <table>
+        <tr>
+            <td>
+                <a wicket:id="view" href="#">
+                    <span wicket:id="Name"></span>
+                    <span wicket:id="phone"></span>
+                    <span wicket:id="email"></span>
+                 </a>
+            </td>
+            
+        </tr>
+    </table>
+</div>
+<input wicket:id="back" type="submit" value="Back To Search"/>
+<a wicket:id="addContact" href="#">Add Contact</a>
+
+</body>
+</html>

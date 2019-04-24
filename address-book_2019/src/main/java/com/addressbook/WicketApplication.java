@@ -6,9 +6,10 @@ import org.apache.wicket.protocol.http.WebApplication;
 import org.apache.wicket.request.Request;
 import org.apache.wicket.request.Response;
 
-import com.addressbook.viewcontrol.LoginPage;
-import com.addressbook.viewcontrol.MainPage;
-import com.addressbook.viewcontrol.UserSession;
+
+import com.addressbook.landing.LoginPage;
+import com.addressbook.landing.MainPage;
+import com.addressbook.landing.UserSession;
 
 /**
  * Application object for your web application.
@@ -39,6 +40,8 @@ public class WicketApplication extends WebApplication
 	public void init()
 	{
 		super.init();
+		/*getComponentInstantiationListeners().add(new SpringComponentInjector(this));*/
+		
 
 		// add your configuration here
 	}

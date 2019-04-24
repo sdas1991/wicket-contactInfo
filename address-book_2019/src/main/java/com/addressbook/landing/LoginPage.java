@@ -1,4 +1,4 @@
-package com.addressbook.viewcontrol;
+package com.addressbook.landing;
 
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.form.Button;
@@ -9,7 +9,7 @@ import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 
 import com.addressbook.dto.User;
-import com.addressbook.viewcontrol.search.ResponsePage;
+import com.addressbook.search.ResponsePage;
 
 public class LoginPage extends WebPage{
 	/**
