@@ -3,11 +3,15 @@ package com.addressbook.businesslogic;
 import java.io.Serializable;
 import java.security.SecureRandom;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.addressbook.datalayer.RedisImpl;
 import com.addressbook.dto.User;
-
+import com.addressbook.landing.LoginPage;
+@SuppressWarnings("static-access")
 public class UserServiceImpl implements UserService, Serializable{
-	
+	private static final Logger LOGGER=LoggerFactory.getLogger(LoginPage.class);
 	private final String alphaNum="ABCDEFGHIJKLMNOPQRSTUVWXYZ123456789";
 
 	@Override
@@ -16,25 +20,40 @@ public class UserServiceImpl implements UserService, Serializable{
 		return new User();
 	}
 
+	
 	@Override
-	public void saveUser(User user) {
+	public boolean saveUser(User user) {
 		//set User id
 		String id=generateUserId();
-		
+		RedisImpl redisClient=new RedisImpl();
 		user.setId(id);
+		try {
+			
+			//Save the user on sign up
+			if(redisClient.saveUser(user.getEmail(), user.getPassword()))
+			{
+				return true;
+			}else {
+				return false;
+			}
+		}catch(Exception e){
+			LOGGER.error(e.getMessage());
+			return false;
+		}
 		
-		System.out.println(user.getId());
+		
+		
 		
 	}
 
 	@Override
 	public boolean validateUser(User user) {
-		// TODO Auto-generated method stub
+		// validate the user on login
 		user.getEmail();
 		
 		RedisImpl redisClient=new RedisImpl();
 		boolean authorised=redisClient.validateUser(user.getEmail(), user.getPassword());
-		return true;
+		return authorised;
 	}
 	
 	private String generateUserId() {

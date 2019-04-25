@@ -15,13 +15,20 @@ import org.apache.wicket.markup.html.panel.Fragment;
 import org.apache.wicket.model.CompoundPropertyModel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
+import org.apache.wicket.model.Model;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
+import org.apache.wicket.validation.IValidationError;
+import org.apache.wicket.validation.ValidationError;
 import org.apache.wicket.validation.validator.EmailAddressValidator;
 import org.apache.wicket.validation.validator.StringValidator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.addressbook.businesslogic.ContactPersonImpl;
 import com.addressbook.dto.ContactPerson;
+import com.addressbook.dto.User;
 import com.addressbook.errorhandling.ErrorFilter;
+import com.addressbook.landing.UserSession;
 import com.addressbook.validator.PhoneValidator;
 import com.addressbook.validator.UserNameValidator;
 
@@ -34,17 +41,23 @@ public class ViewContact extends WebPage{
 
 
 	private String action;
-	
+	private static final Logger LOGGER=LoggerFactory.getLogger(ViewContact.class);
+	private FeedbackPanel succesFeedBackPanel;
 	
 	
 	private ContactPersonImpl cPersonImpl;
-	
+	private String search;
+	private ContactPerson passObject;
 	
 	@SuppressWarnings({ "unchecked", "rawtypes", "serial" })
-	public ViewContact(PageParameters pageParameters, String action) {
+	public ViewContact(PageParameters pageParameters, String action, ContactPerson passObject) {
 		// TODO Auto-generated constructor stub
 		this.action=action;
+		this.search=pageParameters.get("name").toString();
+		this.passObject=passObject;
 		cPersonImpl=new ContactPersonImpl();
+		
+		add(new Label("msg", new Model<String>(UserSession.getInstance().getUser().getEmail())));
 		
 		setDefaultModel(new CompoundPropertyModel(new LoadableDetachableModel() {
             protected Object load() {
@@ -55,15 +68,15 @@ public class ViewContact extends WebPage{
 		
 		FeedbackPanel errorFeedBackPanel = new FeedbackPanel("feedback",
 				new ErrorFilter(FeedbackMessage.ERROR));
-		FeedbackPanel succesFeedBackPanel = new FeedbackPanel("succes",
+		succesFeedBackPanel = new FeedbackPanel("succes",
 				new ErrorFilter(FeedbackMessage.SUCCESS));
 		
 		add(errorFeedBackPanel);
 		add(succesFeedBackPanel);
 		
-	if (action.equalsIgnoreCase("edit")) {
+	
 		add(new  ContactForm("viewForm", getDefaultModel()));
-	}
+	
 			
 
 	}
@@ -74,6 +87,8 @@ public class ViewContact extends WebPage{
 		 * 
 		 */
 		private static final long serialVersionUID = -2314699159249561484L;
+		
+		
 		@SuppressWarnings("unchecked")
 		public ContactForm(String id, IModel model) {
 			super(id, model);
@@ -90,20 +105,26 @@ public class ViewContact extends WebPage{
 		private void addToFieldEdit(Fragment fragment) {
 			
 			TextField name = new TextField("namePerson");
-	        /*name.setRequired(true);
-	        name.add(new UserNameValidator());*/
+	         name.setRequired(true);
+			     name.add(new UserNameValidator());
+			 
 	        fragment.add(name);
 	        
 	        TextField phoneNumber = new TextField("phoneNumber");
-	        /*phoneNumber.setRequired(true);
-	        phoneNumber.add(new PhoneValidator());*/
+	        
+	        	phoneNumber.setRequired(true);
+		        phoneNumber.add(new PhoneValidator());
+	        
 	        fragment.add(phoneNumber);
 
 	        TextField email = new TextField("emailAdd");
-	        /*email.add(StringValidator.maximumLength(150));
-	        email.add(EmailAddressValidator.getInstance());*/
+	        	email.add(StringValidator.maximumLength(150));
+    	        email.add(EmailAddressValidator.getInstance());
+            
 	        fragment.add(email);
 	       
+            
+            
 
 		}
 		
@@ -112,8 +133,10 @@ public class ViewContact extends WebPage{
 			 fragment.add(new Button("delete") {
 		        	public void onSubmit() {
 		                ContactPerson c = (ContactPerson) getForm().getModelObject();
-		                cPersonImpl.deleteContact(c);
-		                info("Deleted Successfully");
+		                User user=UserSession.getInstance().getUser();
+		               //delete method called in business layer
+		                cPersonImpl.deleteContact(user,passObject);
+		                succesFeedBackPanel.getFeedbackMessages().success(this, "Deleted Successfully");
 		                
 		                
 		            }
@@ -126,8 +149,14 @@ public class ViewContact extends WebPage{
 			 fragment.add(new Button("save") {
 		        	public void onSubmit() {
 		                ContactPerson c = (ContactPerson) getForm().getModelObject();
-		                cPersonImpl.saveContact(c);
-		                info("Saved Successfully");
+		                info("Model object submit view contact: "+c.getPhoneNumber());
+		                info("passobject phone "+passObject.getPhoneNumber());
+		                
+		                User user=UserSession.getInstance().getUser();
+		                //update method called in business layer
+		                cPersonImpl.updateEntry(user,passObject,c.getNamePerson(),c.getEmailAdd(),c.getPhoneNumber());
+		                
+		                succesFeedBackPanel.getFeedbackMessages().success(this, "Updated Successfully");
 		                
 		                
 		            }

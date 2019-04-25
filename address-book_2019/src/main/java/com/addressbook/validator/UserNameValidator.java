@@ -9,15 +9,18 @@ public class UserNameValidator implements IValidator<String>{
 	 * 
 	 */
 	private static final long serialVersionUID = 2681343405902434349L;
-	private final static String userPatter="/^[A-Z]+$/i";
+	private final static String userPatter="^[A-Za-z]+$";
 	@Override
 	public void validate(IValidatable<String> validatable) {
 		// TODO Auto-generated method stub
 		String _name=validatable.getValue();
+		
 		if (_name == null || _name.length() == 0) {
+			System.out.println("error in valid");
 			error(validatable, "Name is Empty");
 		}
 		if (!_name.matches(userPatter)) {
+			System.out.println("eror in user");
 			error(validatable, "Name is invalid");
 		}
 	}

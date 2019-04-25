@@ -16,7 +16,11 @@ import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
+import org.apache.wicket.validation.IValidationError;
+import org.apache.wicket.validation.ValidationError;
 import org.apache.wicket.validation.validator.EmailAddressValidator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.addressbook.businesslogic.UserServiceImpl;
 import com.addressbook.contactmanagement.ResponsePage;
@@ -31,9 +35,11 @@ public class SignUp extends WebPage{
 	 */
 	private static final long serialVersionUID = 488568181178862465L;
 	private UserServiceImpl uImpl;
+	private static final Logger LOGGER=LoggerFactory.getLogger(LoginPage.class);
 
 	@SuppressWarnings({ "unchecked", "rawtypes", "serial" })
 	public SignUp(final PageParameters parameters) {
+		LOGGER.info("Inside SignUp page");
 		
 		uImpl=new UserServiceImpl();
 		
@@ -114,12 +120,17 @@ public class SignUp extends WebPage{
 								
 					UserSession.getInstance().setUser(user);
 					
-					uImpl.saveUser(user);
+					if(uImpl.saveUser(user)) {
+						PageParameters pageParameters = new PageParameters();
+						pageParameters.add("email", user.getEmail());
+						
+						setResponsePage(ResponsePage.class, pageParameters);
+					}else {
+						error((IValidationError) new ValidationError().addKey("userNotStored"));
+						LOGGER.info("userNotStored");
+					}
 					
-					PageParameters pageParameters = new PageParameters();
-					pageParameters.add("email", user.getEmail());
 					
-					setResponsePage(ResponsePage.class, pageParameters);
 				}
 			});
 		}

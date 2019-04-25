@@ -14,6 +14,8 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
 
 import org.apache.wicket.request.mapper.parameter.PageParameters;
+import org.apache.wicket.validation.IValidationError;
+import org.apache.wicket.validation.ValidationError;
 import org.apache.wicket.validation.validator.EmailAddressValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,12 +31,12 @@ public class LoginPage extends WebPage{
 	/**
 	 * 
 	 */
-	private static final Logger logger=LoggerFactory.getLogger(LoginPage.class);
+	private static final Logger LOGGER=LoggerFactory.getLogger(LoginPage.class);
 	private static final long serialVersionUID = -459295927972351123L;
 	private UserServiceImpl uImpl;
 	@SuppressWarnings({ "unchecked", "serial", "rawtypes" })
 	public LoginPage() {
-		logger.info("inside login page");
+		LOGGER.info("inside login page");
 		FeedbackPanel errorFeedBackPanel = new FeedbackPanel("feedback",
 				new ErrorFilter(FeedbackMessage.ERROR));
 		FeedbackPanel succesFeedBackPanel = new FeedbackPanel("success",
@@ -95,13 +97,15 @@ public class LoginPage extends WebPage{
 					// TODO Auto-generated method stub
 					super.onSubmit();
 					User user=(User)getForm().getModelObject();
-					if (user.getEmail().equalsIgnoreCase("admin@gmail.com") && user.getPassword().equalsIgnoreCase("admin")) {
+					if (uImpl.validateUser(user)) {
 						
 						UserSession.getInstance().setUser(user);
-						uImpl.validateUser(user);
+						
+						
 						setResponsePage(ResponsePage.class);
 					} else {
-						System.out.println("invalid");
+						error((IValidationError) new ValidationError().addKey("userNotFound"));
+						LOGGER.info("userNotFound");
 
 					}
 				}

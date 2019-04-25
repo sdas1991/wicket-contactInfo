@@ -24,8 +24,10 @@ import org.apache.wicket.util.string.StringValue;
 
 import com.addressbook.businesslogic.ContactPersonImpl;
 import com.addressbook.dto.ContactPerson;
+import com.addressbook.dto.User;
 import com.addressbook.errorhandling.ErrorFilter;
 import com.addressbook.landing.SignUp;
+import com.addressbook.landing.UserSession;
 
 public class ContactPage extends WebPage{
 	
@@ -39,6 +41,7 @@ public class ContactPage extends WebPage{
 	private static final long serialVersionUID = 773373378524218295L;
 	private ModalWindow modalWindow;
 	private String action;
+	private ContactPerson passObject;
 
 	@SuppressWarnings({ "unchecked", "serial" })
 	public ContactPage(PageParameters params) {
@@ -61,10 +64,13 @@ public class ContactPage extends WebPage{
 
 			protected Object load() {
 				
-            	ContactPersonImpl cmpl=new ContactPersonImpl();;
-                return cmpl.getPerson(searchString);
+            	ContactPersonImpl cmpl=new ContactPersonImpl();
+            	User user=UserSession.getInstance().getUser();
+                return cmpl.getPerson(user,searchString);
             }
         };
+        
+        
         
         modalWindow.setPageCreator(new PageCreator() {
 			
@@ -73,7 +79,8 @@ public class ContactPage extends WebPage{
 				// TODO Auto-generated method stub
 				PageParameters pageParameters=new PageParameters();
 				pageParameters.add("name", searchString);
-				return new ViewContact(pageParameters, action);
+				
+				return new ViewContact(pageParameters, action, passObject);
 			}
 		});
         
@@ -138,7 +145,7 @@ public class ContactPage extends WebPage{
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	private void addList(ListItem item) {
 		final ContactPerson person=(ContactPerson)item.getModelObject();
-         
+		passObject=person;
        // addressModel.setObject(new Address("Texas", "3456"));
 		
 		AjaxLink view = new AjaxLink("view", item.getModel()) {

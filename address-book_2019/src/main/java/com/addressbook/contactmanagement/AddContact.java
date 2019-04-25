@@ -4,6 +4,7 @@ import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.feedback.FeedbackMessage;
 import org.apache.wicket.markup.html.WebPage;
+import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.RequiredTextField;
@@ -12,13 +13,21 @@ import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.model.CompoundPropertyModel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
+import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
+import org.apache.wicket.validation.IValidationError;
+import org.apache.wicket.validation.ValidationError;
 import org.apache.wicket.validation.validator.EmailAddressValidator;
 import org.apache.wicket.validation.validator.StringValidator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.addressbook.businesslogic.ContactPersonImpl;
 import com.addressbook.dto.ContactPerson;
+import com.addressbook.dto.User;
 import com.addressbook.errorhandling.ErrorFilter;
+import com.addressbook.landing.LoginPage;
+import com.addressbook.landing.UserSession;
 import com.addressbook.validator.PhoneValidator;
 import com.addressbook.validator.UserNameValidator;
 
@@ -30,12 +39,14 @@ public class AddContact extends WebPage{
 	 * 
 	 */
 	private static final long serialVersionUID = -1861107066037065657L;
+	private static final Logger LOGGER=LoggerFactory.getLogger(AddContact.class);
+	private FeedbackPanel succesFeedBackPanel;
 
 
 
 	
 	private ContactPersonImpl cPersonImpl;
-	
+	private User user;
 	
 	@SuppressWarnings({ "rawtypes", "serial", "unchecked" })
 	
@@ -45,19 +56,21 @@ public class AddContact extends WebPage{
 		cPersonImpl=new ContactPersonImpl();
 		FeedbackPanel errorFeedBackPanel = new FeedbackPanel("feedback",
 				new ErrorFilter(FeedbackMessage.ERROR));
-		FeedbackPanel succesFeedBackPanel = new FeedbackPanel("success",
+		succesFeedBackPanel = new FeedbackPanel("success",
 				new ErrorFilter(FeedbackMessage.SUCCESS));
 		
 		add(errorFeedBackPanel);
 		add(succesFeedBackPanel);
+		add(new Label("msg", new Model<String>(UserSession.getInstance().getUser().getEmail())));
 
 		setDefaultModel(new CompoundPropertyModel(new LoadableDetachableModel() {
             protected Object load() {
+            	System.out.println("inside load");
                 return cPersonImpl.getEmptyPerson();
             }
         }));
 		
-		
+		user=UserSession.getInstance().getUser();
 		
 		add(new AddContactForm("addForm", getDefaultModel()));
 		
@@ -78,10 +91,13 @@ public class AddContact extends WebPage{
 		@SuppressWarnings("unchecked")
 		public AddContactForm(String id, IModel model) {
 			super(id, model);
+			System.out.println("in form");
 			
 			TextField< String> name=new RequiredTextField<>("namePerson");
 			name.add(new UserNameValidator());
+			
 			add(name);
+			
 			
 			TextField< String> phoneNumber=new RequiredTextField<>("phoneNumber");
 			phoneNumber.add(new PhoneValidator());
@@ -91,6 +107,7 @@ public class AddContact extends WebPage{
 			emailAdd.add(StringValidator.maximumLength(150));
 			emailAdd.add(EmailAddressValidator.getInstance());
 			add(emailAdd);
+			
 			
 			addSaveButton();
 			backToSearch();
@@ -103,10 +120,24 @@ public class AddContact extends WebPage{
 			
 			 add(new Button("add") {
 		        	public void onSubmit() {
+		        		System.out.println("inside submit");
 		                ContactPerson c = (ContactPerson) getForm().getModelObject();
-		                cPersonImpl.saveContact(c);
-		                info("Saved Successfully");
-		                System.out.println(c.getNamePerson());
+		                boolean temp=cPersonImpl.saveContact(user,c);
+		                System.out.println(temp);
+		                if (temp) {
+		                	info("Saved Successfully");
+		                	succesFeedBackPanel.getFeedbackMessages().success(this, "Saved Successfully");
+		                	info("saved");
+						} else {
+							System.out.println("error caught");
+							error((IValidationError) new ValidationError().addKey("userNotFound"));
+							LOGGER.info("userNotFound");
+
+						}
+		                
+		                
+		       
+		                
 		                
 		                
 		            }

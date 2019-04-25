@@ -6,7 +6,7 @@ import org.apache.wicket.validation.ValidationError;
 
 public class PhoneValidator implements IValidator<String> {
 	
-	private static final String phonePattern="\\d+";
+	private static final String phonePattern="^[0-9]+$";
 	
 
 	@Override
@@ -20,9 +20,10 @@ public class PhoneValidator implements IValidator<String> {
 		if (phoneNumber.length() != 10) {
 			error(validatable, "phoneNumber invalid");
 		}
-		if(!phonePattern.matches(phonePattern)) {
+		/*if(!phonePattern.matches(phonePattern)) {
+			System.out.println("eror phone");
 			error(validatable, "phoneNumber invalid");
-		}
+		}*/
 	}
 	
 	private void error(IValidatable<String> validatable, String errorKey) {

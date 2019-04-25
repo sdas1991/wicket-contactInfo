@@ -10,7 +10,7 @@ public class ContactPerson extends ModelBase {
 	 * 
 	 */
 	private static final long serialVersionUID = -1879372893218034336L;
-	private String id;
+	private int id;
 	private String namePerson;
 	private String phoneNumber;
 	private String emailAdd;
@@ -21,9 +21,10 @@ public class ContactPerson extends ModelBase {
 		
 	}
 	
-	public ContactPerson(String namePerson, String phoneNumber, String emailAdd) {
+	public ContactPerson(int id, String namePerson, String phoneNumber, String emailAdd) {
 		// TODO Auto-generated constructor stub
 		super();
+		this.id=id;
 		this.namePerson=namePerson;
 		this.phoneNumber=phoneNumber;
 		this.emailAdd=emailAdd;
@@ -31,11 +32,13 @@ public class ContactPerson extends ModelBase {
 		
 	}
 	
-	public String getId() {
+
+
+	public int getId() {
 		return id;
 	}
 
-	public void setId(String id) {
+	public void setId(int id) {
 		this.id = id;
 	}
 
@@ -58,7 +61,13 @@ public class ContactPerson extends ModelBase {
 		this.emailAdd = emailAdd;
 	}
 	
-	
+	public String getKeyString() {
+        String hkey = namePerson.toLowerCase().replaceAll(" ", "")
+                + emailAdd.toLowerCase().replaceAll(" ", "");
+        if(id != 0)
+            hkey += id;
+        return hkey;
+    }
 	
 
 }

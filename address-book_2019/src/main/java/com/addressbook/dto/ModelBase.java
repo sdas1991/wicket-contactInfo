@@ -2,6 +2,7 @@ package com.addressbook.dto;
 
 import java.io.Serializable;
 
+//Serialized for implementaion for data objects
 public class ModelBase implements Serializable{
 	
 	/**
