@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/" configDebug="true">
+
+  
+  <appender name="application.file" class="org.apache.log4j.RollingFileApender">
+  <param name="file" value="C:/logs/bcm/policy/application.log"/>
+  <param name="append" value="true"/>
+  <param name="maxFileSize" value="32MB"/>
+  <param name="maxBackupIndex" value="10"/>
+  <param name="threshold" value="info"/>  
+  <param name="ConvertionPattern" value="%d{yyyy-MM-dd HH:mm:ss} %-5p %c{1}:%L - %m%n"/>
+  </appender>
+  
+    <root level="INFO">
+      <AppenderRef ref="application.file"/>
+    </root>
+ 
+</log4j:configuration>

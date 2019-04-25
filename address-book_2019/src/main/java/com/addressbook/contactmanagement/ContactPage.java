@@ -1,4 +1,4 @@
-package com.addressbook.search;
+package com.addressbook.contactmanagement;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
@@ -8,12 +8,14 @@ import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.extensions.ajax.markup.html.modal.ModalWindow;
 import org.apache.wicket.extensions.ajax.markup.html.modal.ModalWindow.PageCreator;
 import org.apache.wicket.extensions.ajax.markup.html.modal.ModalWindow.WindowClosedCallback;
+import org.apache.wicket.feedback.FeedbackMessage;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
+import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.PropertyModel;
@@ -22,6 +24,7 @@ import org.apache.wicket.util.string.StringValue;
 
 import com.addressbook.businesslogic.ContactPersonImpl;
 import com.addressbook.dto.ContactPerson;
+import com.addressbook.errorhandling.ErrorFilter;
 import com.addressbook.landing.SignUp;
 
 public class ContactPage extends WebPage{
@@ -39,17 +42,25 @@ public class ContactPage extends WebPage{
 
 	@SuppressWarnings({ "unchecked", "serial" })
 	public ContactPage(PageParameters params) {
+		FeedbackPanel errorFeedBackPanel = new FeedbackPanel("feedback",
+				new ErrorFilter(FeedbackMessage.ERROR));
+		FeedbackPanel succesFeedBackPanel = new FeedbackPanel("success",
+				new ErrorFilter(FeedbackMessage.SUCCESS));
+		
+		add(errorFeedBackPanel);
+		add(succesFeedBackPanel);
 		modalWindow=new ModalWindow("modalWindow");
 		
         final String searchString = params.get("searchString").toString();
         
-        IModel<ContactPerson> contactsModel = new LoadableDetachableModel<ContactPerson>() {
+        IModel contactsModel = new LoadableDetachableModel() {
             /**
 			 * 
 			 */
 			private static final long serialVersionUID = -6645316581893767636L;
 
-			protected ContactPerson load() {
+			protected Object load() {
+				
             	ContactPersonImpl cmpl=new ContactPersonImpl();;
                 return cmpl.getPerson(searchString);
             }
@@ -61,7 +72,7 @@ public class ContactPage extends WebPage{
 			public Page createPage() {
 				// TODO Auto-generated method stub
 				PageParameters pageParameters=new PageParameters();
-				pageParameters.add("id", searchString);
+				pageParameters.add("name", searchString);
 				return new ViewContact(pageParameters, action);
 			}
 		});
@@ -92,11 +103,21 @@ public class ContactPage extends WebPage{
         add(contacts);
         
         
-        add(new Button("back") {
-            public void onSubmit() {
-                setResponsePage(ResponsePage.class);
-            }
-        }.setDefaultFormProcessing(false));
+        
+        
+        add(new AjaxLink<String>("back") {
+
+			/**
+			 * 
+			 */
+			private static final long serialVersionUID = 6573750371569433358L;
+
+			@Override
+			public void onClick(AjaxRequestTarget target) {
+				// TODO Auto-generated method stub
+				setResponsePage(ResponsePage.class);
+			}
+		});
         
         add(new AjaxLink<String>("addContact") {
 

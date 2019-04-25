@@ -1,54 +1,135 @@
 package com.addressbook.landing;
 
+import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.ajax.markup.html.AjaxLink;
+import org.apache.wicket.feedback.FeedbackMessage;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.PasswordTextField;
 import org.apache.wicket.markup.html.form.TextField;
-import org.apache.wicket.model.PropertyModel;
-import org.apache.wicket.request.mapper.parameter.PageParameters;
+import org.apache.wicket.markup.html.panel.FeedbackPanel;
+import org.apache.wicket.model.CompoundPropertyModel;
+import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.LoadableDetachableModel;
 
+import org.apache.wicket.request.mapper.parameter.PageParameters;
+import org.apache.wicket.validation.validator.EmailAddressValidator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.addressbook.businesslogic.UserServiceImpl;
+import com.addressbook.contactmanagement.ResponsePage;
 import com.addressbook.dto.User;
-import com.addressbook.search.ResponsePage;
+import com.addressbook.errorhandling.ErrorFilter;
+import com.addressbook.validator.PasswordValidator;
+
 
 public class LoginPage extends WebPage{
 	/**
 	 * 
 	 */
+	private static final Logger logger=LoggerFactory.getLogger(LoginPage.class);
 	private static final long serialVersionUID = -459295927972351123L;
+	private UserServiceImpl uImpl;
+	@SuppressWarnings({ "unchecked", "serial", "rawtypes" })
 	public LoginPage() {
+		logger.info("inside login page");
+		FeedbackPanel errorFeedBackPanel = new FeedbackPanel("feedback",
+				new ErrorFilter(FeedbackMessage.ERROR));
+		FeedbackPanel succesFeedBackPanel = new FeedbackPanel("success",
+				new ErrorFilter(FeedbackMessage.SUCCESS));
 		
-		final User user=new User();
-		Form<Object> form=new Form<Object>("form");
+		add(errorFeedBackPanel);
+		add(succesFeedBackPanel);
 		
-		form.add(new TextField<String>("userName",new PropertyModel<String>(user,"email")));
-		form.add(new PasswordTextField("pswd",new PropertyModel<String>(user,"password")));
+		uImpl=new UserServiceImpl();
 		
-		form.add(new Button("submitLog") {
+		setDefaultModel(new CompoundPropertyModel(new LoadableDetachableModel() {
+            protected Object load() {
+                return uImpl.getEmptyUser();
+            }
+        }));
+		
+		
+		
+		add(new LoginForm("form", getDefaultModel()));
+	
+		
+	
+	}
+	
+	@SuppressWarnings({ "rawtypes", "serial" })
+	private class LoginForm extends Form{
+		
+
+		@SuppressWarnings("unchecked")
+		public LoginForm(String id, IModel model) {
+			super(id, model);
 			
-			/**
-			 * 
-			 */
-			private static final long serialVersionUID = -6525001367274151206L;
-
-			@Override
-			public void onSubmit() {
-				// TODO Auto-generated method stub
-				super.onSubmit();
-				
-				if (user.getEmail().equalsIgnoreCase("admin") && user.getPassword().equalsIgnoreCase("admin")) {
-					
-					UserSession.getInstance().setUser(user);
-					
-					setResponsePage(ResponsePage.class);
-				} else {
-					System.out.println("invalid");
-
-				}
-			}
-		});
+			addFormComponent();
+			addButton();
+			addLink();
+		}
 		
-		add(form);
+		public void addFormComponent() {
+			TextField<String> userName=new TextField<String>("emailId");
+			userName.add(EmailAddressValidator.getInstance());
+			add(userName);
+			
+			PasswordTextField password=new PasswordTextField("password");
+			password.add(new PasswordValidator());
+			add(password);
+		}
+		
+		public void addButton() {
+			add(new Button("submitLog") {
+				
+				/**
+				 * 
+				 */
+				private static final long serialVersionUID = -6525001367274151206L;
+
+				@Override
+				public void onSubmit() {
+					// TODO Auto-generated method stub
+					super.onSubmit();
+					User user=(User)getForm().getModelObject();
+					if (user.getEmail().equalsIgnoreCase("admin@gmail.com") && user.getPassword().equalsIgnoreCase("admin")) {
+						
+						UserSession.getInstance().setUser(user);
+						uImpl.validateUser(user);
+						setResponsePage(ResponsePage.class);
+					} else {
+						System.out.println("invalid");
+
+					}
+				}
+			});
+			
+		}
+		
+		public void addLink() {
+			add(new AjaxLink<String>("backSignUp") {
+				
+
+
+				/**
+				 * 
+				 */
+				private static final long serialVersionUID = -7650762579919167112L;
+
+				@Override
+				public void onClick(AjaxRequestTarget target) {
+					// TODO Auto-generated method stub
+					PageParameters pageparam=new PageParameters();
+					pageparam.add("id", "fromlogin");
+					setResponsePage(SignUp.class, pageparam);
+					
+				}
+			});
+		}
+		
 	}
 	
 	

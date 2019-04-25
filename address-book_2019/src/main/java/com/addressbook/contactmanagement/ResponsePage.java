@@ -1,9 +1,11 @@
-package com.addressbook.search;
+package com.addressbook.contactmanagement;
 
 
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.feedback.FeedbackMessage;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.basic.Label;
@@ -35,52 +37,69 @@ public class ResponsePage extends WebPage{
 	 */
 	private static final long serialVersionUID = 2788311229442360682L;
 	private ContactPerson person;
-	private  Form<?> form;
 	
 	
-	private String searchString;
+	
 
 	public ResponsePage() {
 		
-		person=new ContactPerson();
+		FeedbackPanel errorFeedBackPanel = new FeedbackPanel("feedback",
+				new ErrorFilter(FeedbackMessage.ERROR));
+		FeedbackPanel succesFeedBackPanel = new FeedbackPanel("success",
+				new ErrorFilter(FeedbackMessage.SUCCESS));
+		
+		add(errorFeedBackPanel);
+		add(succesFeedBackPanel);
+		
 		
 		
 		add(new Label("msg", new Model<String>(UserSession.getInstance().getUser().getEmail())));
 		
+		add(new ResponseForm("search-form"));
 		
-		addForm(person);	
 		
 		
 	}
-	 private void addForm(ContactPerson person) {
-	        form = createForm(person);
-	        
-	        
-	        addSubmitButton(form);
-	        add(form);
-	    }
 	 
-	 @SuppressWarnings({ "unchecked", "rawtypes" })
-	private Form<?> createForm(ContactPerson person) {
-	       // add(new FeedbackPanel("feedback"));
-		 
-		 
-		 Form<?> form = new Form<>("search-form");
-		 FeedbackPanel errorFeedBackPanel = new FeedbackPanel("feedback",
-					new ErrorFilter(FeedbackMessage.ERROR));
-			FeedbackPanel succesFeedBackPanel = new FeedbackPanel("succes",
-					new ErrorFilter(FeedbackMessage.SUCCESS));
+	 
+	
+	
+	
+	
+	
+	@SuppressWarnings("rawtypes")
+	private class ResponseForm extends Form{
+		
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = -7754723128701497191L;
+		private String searchString;
+
+		@SuppressWarnings({ "unchecked" })
+		public ResponseForm(String id) {
+			super(id);
+			// TODO Auto-generated constructor stub
 			
-			add(errorFeedBackPanel);
-			add(succesFeedBackPanel);
-	        
-	        
-	        add(new TextField("searchString",
+			add(new TextField("searchString",
 	                  new PropertyModel(this, "searchString")));
-	        add(new BookmarkablePageLink("addContact",
-	                  AddContact.class));
+	        
 			
-	        form.add(new Link<String>("signOut") {
+			add(new AjaxLink<String>("addContact") {
+
+				/**
+				 * 
+				 */
+				private static final long serialVersionUID = 6573750371569433358L;
+
+				@Override
+				public void onClick(AjaxRequestTarget target) {
+					// TODO Auto-generated method stub
+					setResponsePage(AddContact.class);
+				}
+			});
+	        
+	        add(new Link<String>("signOut") {
 				/**
 				 * 
 				 */
@@ -95,33 +114,15 @@ public class ResponsePage extends WebPage{
 				}
 				
 			});
-	        
-	        return form;
-	    }
-	 
-	 
-	 
-	 public String getSearchString() {
-		return searchString;
+		}
+		
+		public void onSubmit() {
+			PageParameters params = new PageParameters();
+            params.add("searchString", searchString);
+            setResponsePage(ContactPage.class, params);
+		}
+		
+		 
 	}
-	public void setSearchString(String searchString) {
-		this.searchString = searchString;
-	}
-	
-	
-	private void addSubmitButton(Form<?> form) {
-        form.add(new Button("submit") {
-
-            @Override
-            public void onSubmit() {
-            	PageParameters params = new PageParameters();
-                params.add("searchString", getSearchString());
-                setResponsePage(ContactPage.class, params);
-            }
-
-        });
-    }
-	
-	
 
 }

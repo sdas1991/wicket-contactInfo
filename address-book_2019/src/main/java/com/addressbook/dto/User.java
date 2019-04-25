@@ -11,13 +11,19 @@ public class User extends ModelBase implements Serializable{
 	 */
 	private static final long serialVersionUID = -4670086175830616561L;
 	
-	private String name;
-	private String email;
+	private String id;
+	private String emailId;
 	private String password;
 	private List<ContactPerson> contactPerson;
 	
 	
 	
+	public String getId() {
+		return id;
+	}
+	public void setId(String id) {
+		this.id = id;
+	}
 	public List<ContactPerson> getContactPerson() {
 		if(contactPerson==null) {
 			contactPerson=new ArrayList<ContactPerson>();
@@ -27,25 +33,20 @@ public class User extends ModelBase implements Serializable{
 	public void setContactPerson(List<ContactPerson> contactPerson) {
 		this.contactPerson = contactPerson;
 	}
-	public String getName() {
-		return name;
-	}
-	public void setName(String name) {
-		this.name = name;
-	}
+	
 	public User() {
 		// TODO Auto-generated constructor stub
 	}
-	public User(String email, String password) {
-		this.email=email;
+	public User(String emailId, String password) {
+		this.emailId=emailId;
 		this.password=password;
 	}
 	
 	public String getEmail() {
-		return email;
+		return emailId;
 	}
 	public void setEmail(String email) {
-		this.email = email;
+		this.emailId = email;
 	}
 	public String getPassword() {
 		return password;
@@ -54,7 +55,13 @@ public class User extends ModelBase implements Serializable{
 		this.password = password;
 	}
 	
-	
+	@Override
+	public String toString() {
+		final StringBuilder sb=new StringBuilder();
+		sb.append("User Model: email="+emailId);
+		return sb.toString();
+		
+	}
 	
 	
 	

@@ -5,6 +5,8 @@
 <title>LogIn</title>
 </head>
 <body>
+<span style="color: green" wicket:id="success"> </span>
+<span style="color: red" wicket:id="feedback"></span>
 <div class="col-4"></div>
 <div>
 <h1>LogIn</h1>
@@ -13,17 +15,18 @@
 <form wicket:id="form">
 <div class="form-group">
 	<label> UserName</label>
-	<input  type="text" wicket:id="userName" placeholder="Enter your user name" />
+	<input  type="text" wicket:id="emailId" placeholder="Enter your user name" />
 	
 </div>
 <div class="form-group">
 	<label for="fname"> Password</label>
 	
-	<input  type="password" placeholder="Enter your password" wicket:id="pswd"/>
+	<input  type="password" placeholder="Enter your password" wicket:id="password"/>
 	
 </div>
 
-<input type="submit" wicket:id="submitLog" />
+<input type="submit" wicket:id="submitLog" value="Submit" /><br/>
+<div><a wicket:id="backSignUp" >Sign Up</a></div>
 
 </form>
 

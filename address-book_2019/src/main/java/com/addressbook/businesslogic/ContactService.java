@@ -1,10 +1,12 @@
 package com.addressbook.businesslogic;
 
+import java.util.List;
+
 import com.addressbook.dto.ContactPerson;
 
-public interface ContactInterface {
+public interface ContactService {
 	
-	public ContactPerson getPerson(String name);
+	public List<ContactPerson> getPerson(String name);
 	
 	public ContactPerson getEmptyPerson();
 	

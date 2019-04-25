@@ -5,14 +5,15 @@
 <title>Insert title here</title>
 </head>
 <body>
-
+<span style="color: green" wicket:id="success"> </span>
+<span style="color: red" wicket:id="feedback"></span>
 <div wicket:id="modalWindow"></div>
 <div wicket:id="contacts" class="contact">
     <table>
         <tr>
             <td>
                 <a wicket:id="view" href="#">
-                    <span wicket:id="Name"></span>
+                    <span wicket:id="name"></span>
                     <span wicket:id="phone"></span>
                     <span wicket:id="email"></span>
                  </a>
@@ -20,8 +21,9 @@
             
         </tr>
     </table>
-</div>
-<input wicket:id="back" type="submit" value="Back To Search"/>
+</div><br/>
+
+<a wicket:id="back" href="#">Back To Search</a>
 <a wicket:id="addContact" href="#">Add Contact</a>
 
 </body>

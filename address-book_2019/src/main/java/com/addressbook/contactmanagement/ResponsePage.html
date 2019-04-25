@@ -5,21 +5,22 @@
 <title>Search Page</title>
 </head>
 <body>
-<span style="color: green" wicket:id="succes"> </span>
+<span style="color: green" wicket:id="success"> </span>
 <span style="color: red" wicket:id="feedback"></span>
 <div>
 <h1>Welcome:<span wicket:id="msg"></span></h1>
-<form id="search-form">
+<form wicket:id="search-form">
+<div>
  <table>
   <tr>
    <td>Search</td>
-   <td><input type="text" name="search"/></td>
+   <td><input type="text" name="search" wicket:id="searchString"/></td>
    <td><input type="submit" value="Search" class="button"></td>
-   <td><a href="#">Add New Contact</a></td>
+   <td><a wicket:id="addContact" href="#">Add Contact</a></td>
   </tr>
  </table>
- 
- <a wicket:id="signOut" >SignOut</a>
+ </div>
+ <div><a wicket:id="signOut" >SignOut</a></div>
 </form>
 
 

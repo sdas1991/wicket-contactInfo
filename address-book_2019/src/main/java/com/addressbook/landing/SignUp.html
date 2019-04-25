@@ -8,6 +8,8 @@
    href = "/src/main/webapp/SignUpDesign.css" /> -->
 </head>
 <body>
+<span style="color: green" wicket:id="success"> </span>
+<span style="color: red" wicket:id="feedback"></span>
 <form wicket:id="formSignUp" style="border:1px solid #ccc">
   <div class="container">
     <h1>Sign Up</h1>
@@ -15,13 +17,13 @@
     <hr>
 
     <label for="email"><b>Email</b></label>
-    <input type="text" placeholder="Enter Email" name="email" wicket:id="emailId" required>
+    <input type="text" placeholder="Enter Email" wicket:id="emailId" required>
 
     <label for="psw"><b>Password</b></label>
-    <input type="password" placeholder="Enter Password" name="psw" wicket:id="password" required>
+    <input type="password" placeholder="Enter Password" wicket:id="password" required>
 
     <label for="psw-repeat"><b>Repeat Password</b></label>
-    <input type="password" placeholder="Repeat Password" name="psw-repeat" wicket:id="cpassword" required>
+    <input type="password" placeholder="Repeat Password" wicket:id="cpassword" required>
 
   
 
