@@ -104,7 +104,7 @@ public class LoginPage extends WebPage{
 						
 						setResponsePage(ResponsePage.class);
 					} else {
-						error((IValidationError) new ValidationError().addKey("userNotFound"));
+						error("User not Present");
 						LOGGER.info("userNotFound");
 
 					}
@@ -128,6 +128,7 @@ public class LoginPage extends WebPage{
 					// TODO Auto-generated method stub
 					PageParameters pageparam=new PageParameters();
 					pageparam.add("id", "fromlogin");
+					//on successful login
 					setResponsePage(SignUp.class, pageparam);
 					
 				}

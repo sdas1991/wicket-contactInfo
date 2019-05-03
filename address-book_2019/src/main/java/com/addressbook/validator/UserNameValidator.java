@@ -16,12 +16,10 @@ public class UserNameValidator implements IValidator<String>{
 		String _name=validatable.getValue();
 		
 		if (_name == null || _name.length() == 0) {
-			System.out.println("error in valid");
-			error(validatable, "Name is Empty");
+			error(validatable, "empty");
 		}
 		if (!_name.matches(userPatter)) {
-			System.out.println("eror in user");
-			error(validatable, "Name is invalid");
+			error(validatable, "invalid");
 		}
 	}
 	

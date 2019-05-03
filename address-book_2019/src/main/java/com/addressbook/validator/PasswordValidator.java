@@ -19,10 +19,10 @@ public class PasswordValidator implements IValidator<String> {
 		String pasword=validatable.getValue();
 		
 		if (pasword == null || pasword.length() == 0) {
-			error(validatable, "Password is Empty");
+			error(validatable, "invalid");
 		}
 		if (pasword.length() < 3 || pasword.length() > 10) {
-			error(validatable, "PasswordLength invalid");
+			error(validatable, "invalid");
 		}
 	}
 	

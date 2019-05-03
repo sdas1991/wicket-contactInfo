@@ -8,6 +8,7 @@ import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.Form;
+import org.apache.wicket.markup.html.form.NumberTextField;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
@@ -17,9 +18,11 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
+import org.apache.wicket.util.parse.metapattern.parsers.IntegerVariableAssignmentParser;
 import org.apache.wicket.validation.IValidationError;
 import org.apache.wicket.validation.ValidationError;
 import org.apache.wicket.validation.validator.EmailAddressValidator;
+import org.apache.wicket.validation.validator.RangeValidator;
 import org.apache.wicket.validation.validator.StringValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,9 +48,11 @@ public class ViewContact extends WebPage{
 	private FeedbackPanel succesFeedBackPanel;
 	
 	
+	
 	private ContactPersonImpl cPersonImpl;
 	private String search;
 	private ContactPerson passObject;
+	
 	
 	@SuppressWarnings({ "unchecked", "rawtypes", "serial" })
 	public ViewContact(PageParameters pageParameters, String action, ContactPerson passObject) {
@@ -61,18 +66,24 @@ public class ViewContact extends WebPage{
 		
 		setDefaultModel(new CompoundPropertyModel(new LoadableDetachableModel() {
             protected Object load() {
-                return cPersonImpl.getEmptyPerson();
+              //return the object received
+            	ContactPerson cp=cPersonImpl.getEmptyPerson();
+            	cp.setEmailAdd(passObject.getEmailAdd());
+            	cp.setNamePerson(passObject.getNamePerson());
+            	cp.setPhoneNumber(passObject.getPhoneNumber());
+            	return cp;
             }
         }));
 		
-		
 		FeedbackPanel errorFeedBackPanel = new FeedbackPanel("feedback",
 				new ErrorFilter(FeedbackMessage.ERROR));
-		succesFeedBackPanel = new FeedbackPanel("succes",
+		succesFeedBackPanel = new FeedbackPanel("success",
 				new ErrorFilter(FeedbackMessage.SUCCESS));
 		
+		//add(new FeedbackPanel("feedback"));
 		add(errorFeedBackPanel);
 		add(succesFeedBackPanel);
+		
 		
 	
 		add(new  ContactForm("viewForm", getDefaultModel()));
@@ -93,12 +104,18 @@ public class ViewContact extends WebPage{
 		public ContactForm(String id, IModel model) {
 			super(id, model);
 			Fragment fragment=new Fragment("container", "editFragment", this);
+			//add form component
 			addToFieldEdit(fragment);
+			//add delete button
 			addDeleteButton(fragment);
+			//add save button
 			addSaveButton(fragment);
 			
+			// add the fragment to form
 			add(fragment);
-			// TODO Auto-generated constructor stub
+			
+			
+
 		}
 		
 		@SuppressWarnings({ "rawtypes", "unchecked"})
@@ -106,21 +123,21 @@ public class ViewContact extends WebPage{
 			
 			TextField name = new TextField("namePerson");
 	         name.setRequired(true);
-			     name.add(new UserNameValidator());
+			 name.add(new UserNameValidator());
 			 
 	        fragment.add(name);
 	        
 	        TextField phoneNumber = new TextField("phoneNumber");
 	        
 	        	phoneNumber.setRequired(true);
-		        phoneNumber.add(new PhoneValidator());
-	        
+	        	phoneNumber.add(new PhoneValidator());
+		       
 	        fragment.add(phoneNumber);
 
 	        TextField email = new TextField("emailAdd");
 	        	email.add(StringValidator.maximumLength(150));
     	        email.add(EmailAddressValidator.getInstance());
-            
+    	        
 	        fragment.add(email);
 	       
             
@@ -129,34 +146,43 @@ public class ViewContact extends WebPage{
 		}
 		
 		@SuppressWarnings({ "serial" })
-		private void addDeleteButton(Fragment fragment) {
+	private void addDeleteButton(Fragment fragment) {
 			 fragment.add(new Button("delete") {
 		        	public void onSubmit() {
-		                ContactPerson c = (ContactPerson) getForm().getModelObject();
+		                //ContactPerson c = (ContactPerson) getForm().getModelObject();
 		                User user=UserSession.getInstance().getUser();
 		               //delete method called in business layer
 		                cPersonImpl.deleteContact(user,passObject);
+		                
 		                succesFeedBackPanel.getFeedbackMessages().success(this, "Deleted Successfully");
 		                
 		                
 		            }
-
-		           
+		        			           
 		            });
+			 
+			
 		}
 		@SuppressWarnings({ "serial" })
 		private void addSaveButton(Fragment fragment) {
 			 fragment.add(new Button("save") {
 		        	public void onSubmit() {
 		                ContactPerson c = (ContactPerson) getForm().getModelObject();
-		                info("Model object submit view contact: "+c.getPhoneNumber());
-		                info("passobject phone "+passObject.getPhoneNumber());
+		                
+		                LOGGER.debug("Model object phone : "+c.getPhoneNumber());
+		                LOGGER.debug("passobject phone : "+passObject.getPhoneNumber());
 		                
 		                User user=UserSession.getInstance().getUser();
 		                //update method called in business layer
-		                cPersonImpl.updateEntry(user,passObject,c.getNamePerson(),c.getEmailAdd(),c.getPhoneNumber());
+		                try {
+							cPersonImpl.updateEntry(user,passObject,c.getNamePerson(),c.getEmailAdd(),c.getPhoneNumber());
+							succesFeedBackPanel.getFeedbackMessages().success(this, "Updated Successfully");
+						} catch (Exception e) {
+							error("error in updating");
+							LOGGER.error("error in updating "+e.getMessage());
+						}
 		                
-		                succesFeedBackPanel.getFeedbackMessages().success(this, "Updated Successfully");
+		                
 		                
 		                
 		            }

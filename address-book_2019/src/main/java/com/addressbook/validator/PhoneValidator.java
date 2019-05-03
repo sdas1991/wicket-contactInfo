@@ -1,5 +1,7 @@
 package com.addressbook.validator;
 
+import java.util.regex.Pattern;
+
 import org.apache.wicket.validation.IValidatable;
 import org.apache.wicket.validation.IValidator;
 import org.apache.wicket.validation.ValidationError;
@@ -15,15 +17,15 @@ public class PhoneValidator implements IValidator<String> {
 		
 		String phoneNumber=validatable.getValue();
 		if (phoneNumber == null || phoneNumber.length() == 0) {
-			error(validatable, "phoneNumber is Empty");
+			error(validatable, "invalid");
 		}
 		if (phoneNumber.length() != 10) {
-			error(validatable, "phoneNumber invalid");
+			error(validatable, "invalid");
 		}
-		/*if(!phonePattern.matches(phonePattern)) {
-			System.out.println("eror phone");
-			error(validatable, "phoneNumber invalid");
-		}*/
+		if(!phoneNumber.matches( phonePattern)) {
+			System.out.println("error in phone");
+			error(validatable, "invalid");
+		}
 	}
 	
 	private void error(IValidatable<String> validatable, String errorKey) {

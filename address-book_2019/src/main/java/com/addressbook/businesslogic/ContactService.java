@@ -15,7 +15,7 @@ public interface ContactService {
 	
 	public void deleteContact(User user, ContactPerson contact);
 	
-	public void updateEntry(User user, ContactPerson person,String newFirstName, String email, String phone);
+	public void updateEntry(User user, ContactPerson person,String newFirstName, String email, String phone) throws Exception;
 	
 	
 

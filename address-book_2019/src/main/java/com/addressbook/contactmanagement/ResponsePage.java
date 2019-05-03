@@ -79,7 +79,7 @@ public class ResponsePage extends WebPage{
 		@SuppressWarnings({ "unchecked" })
 		public ResponseForm(String id) {
 			super(id);
-			// TODO Auto-generated constructor stub
+			
 			
 			add(new TextField("searchString",
 	                  new PropertyModel(this, "searchString")));
@@ -94,7 +94,7 @@ public class ResponsePage extends WebPage{
 
 				@Override
 				public void onClick(AjaxRequestTarget target) {
-					// TODO Auto-generated method stub
+					
 					setResponsePage(AddContact.class);
 				}
 			});

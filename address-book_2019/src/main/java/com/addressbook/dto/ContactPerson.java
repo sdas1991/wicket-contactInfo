@@ -62,10 +62,12 @@ public class ContactPerson extends ModelBase {
 	}
 	
 	public String getKeyString() {
-        String hkey = namePerson.toLowerCase().replaceAll(" ", "")
-                + emailAdd.toLowerCase().replaceAll(" ", "");
-        if(id != 0)
-            hkey += id;
+        String hkey = namePerson.toLowerCase().replaceAll(" ", "");
+        if(id != 0) {
+        	
+        	 hkey += id;
+        }
+           
         return hkey;
     }
 	

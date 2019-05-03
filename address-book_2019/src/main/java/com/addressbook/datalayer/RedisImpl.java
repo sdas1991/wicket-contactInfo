@@ -7,6 +7,10 @@ import java.util.Base64;
 import java.util.List;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.addressbook.businesslogic.ContactPersonImpl;
 import com.addressbook.dto.ContactPerson;
 import com.addressbook.dto.User;
 
@@ -14,13 +18,12 @@ import redis.clients.jedis.Jedis;
 import redis.clients.jedis.params.ZAddParams;
 
 public class RedisImpl {
+	
+	private static final Logger LOGGER=LoggerFactory.getLogger(RedisImpl.class);
 
 	private static Jedis jedis = new Jedis("localhost");
 
-	/*
-	 * private static void auth() { String session = jedis.auth(authKey); }
-	 */
-	public static boolean saveUser(String username, String password) {
+	public boolean saveUser(String username, String password) {
 
 		if (!jedis.exists("user:" + username)) {
 			MessageDigest digest = null;
@@ -31,15 +34,16 @@ public class RedisImpl {
 				return false;
 			}
 			
-			String pass = Base64.getEncoder().encodeToString(digest.digest(password.getBytes()));
+			String pass = Base64.getEncoder().encodeToString(digest.digest(password.getBytes()));			
 			jedis.hset("user:" + username, "password", pass);
+			
 			return true;
 		} else {
 			return false;
 		}
 	}
 
-	public static boolean validateUser(String username, String password) {
+	public boolean validateUser(String username, String password) {
 
 		MessageDigest digest = null;
 		try {
@@ -50,6 +54,7 @@ public class RedisImpl {
 		}
 		
 		String pass = Base64.getEncoder().encodeToString(digest.digest(password.getBytes()));
+		
 		if (jedis.hexists("user:" + username, "password")) {
 			return (jedis.hget("user:" + username, "password").equals(pass));
 		} else {
@@ -57,18 +62,17 @@ public class RedisImpl {
 		}
 	}
 
-	public static boolean addContact(User user, String name, String email, String phone) {
+	public boolean addContact(User user, String name, String email, String phone) {
 
 		if (user == null || name == null || email == null)
 			return false;
-
-		
 
 		String listKey = user.getEmail() + ":contactList";
 		String entryKey = name.toLowerCase().replaceAll(" ", "");
 
 		boolean isNewKey = (jedis.zadd(listKey, 0, entryKey, ZAddParams.zAddParams().nx()) == 1);
-
+		LOGGER.info("is new key boolean while adding: "+isNewKey);
+		
 		int duplicateIndex = 0;
 		while (!isNewKey) {
 			duplicateIndex++;
@@ -79,32 +83,31 @@ public class RedisImpl {
 			entryKey = entryKey + duplicateIndex;
 
 		String hKey = user.getEmail() + ":" + entryKey;
-		//System.out.println("hkey while inserting "+hKey);
 		jedis.hset(hKey, "Name", name);
 		jedis.hset(hKey, "email", email);
 		jedis.hset(hKey, "index", Integer.toString(duplicateIndex));
-		if (phone != null)
-			jedis.hset(hKey, "phone", phone);
+		jedis.hset(hKey, "phone", phone);
+			
 
 		return true;
 	}
 	
-    public static ContactPerson getContact(User user, String entryKey) {
+    public ContactPerson getContact(User user, String entryKey) {
        
         String hKey = user.getEmail() + ":" + entryKey;
-        System.out.println("user email in redis while getting "+user.getEmail() );
-        System.out.println("hkey while geting "+hKey);
+        
+        LOGGER.info("hkey while getting contact "+hKey);
+        
         Map<String, String> value = jedis.hgetAll(hKey);
         
         String firstName = value.get("Name");
-        
         String email = value.get("email");
         String phone = value.get("phone");
         int id = Integer.parseInt(value.get("index"));
         return (new ContactPerson(id,firstName, phone,email));
     }
     
-    public static List<ContactPerson> searchEntries(User user, String search) {
+    public List<ContactPerson> searchContact(User user, String search) {
         
         if(search.contains(" "))
             search = search.replaceAll(" ", "");
@@ -114,44 +117,48 @@ public class RedisImpl {
         
         String max = "[" + search.toLowerCase() + "~";
         String[] resultKeys = jedis.zrangeByLex(listKey, min, max).toArray(new String[0]);
+        
+        LOGGER.info("search person by lex : "+jedis.zrangeByLex(listKey, min, max));
         List<ContactPerson> result = new ArrayList<ContactPerson>(resultKeys.length);
-        for(int i = 0; i < resultKeys.length; i++)
-            result.add(getContact(user, resultKeys[i])) ;
+        for(int i = 0; i < resultKeys.length; i++) {
+        	result.add(getContact(user, resultKeys[i]));
+        	
+        }
+            
         return result;
     }
     
-    public static void updateEntry(User user, ContactPerson person, String newFirstName, String email, String phone) {
+    public void updateContact(User user, ContactPerson person, String newFirstName, String email, String phone) {
         
         if(person.getNamePerson().equalsIgnoreCase(newFirstName)) {
-        	//System.out.println("in redis keyString "+person.getKeyString());
-            
+        	
+        	LOGGER.info("person name already object from front "+person.getNamePerson());
+        	LOGGER.info("person name new object "+newFirstName);
+        	         
         	String hkey = user.getEmail() + ":" + person.getKeyString();
            
-            // System.out.println("phone number inside redis "+phone);
-            //System.out.println("in redis hkey while updating "+hkey);
-            
             jedis.hset(hkey, "Name", newFirstName);
-            if(email != null)
-                jedis.hset(hkey, "email", email);
-            if(phone != null)
-                jedis.hset(hkey, "phone", phone);
+            jedis.hset(hkey, "email", email);
+         
+            jedis.hset(hkey, "phone", phone);
         } else {
-            
-        	
-        	
+        	LOGGER.info("inside else of update as name is different "+newFirstName);     	
         	deleteContact(user, person);
             addContact(user, newFirstName, email, phone);
         }
 
     }
     
-    public static void deleteContact(User user, ContactPerson contact) {
+    public void deleteContact(User user, ContactPerson contact) {
         
         String keyName = contact.getKeyString();
-        System.out.println("keyname in delete "+keyName);
-        System.out.println("Hsk key in delete "+user.getEmail() + ":contactList"+keyName);
-        jedis.zrem(user.getEmail() + ":contactList", keyName);
-        jedis.del(user.getEmail() + ":" + keyName);
+       LOGGER.debug("keyname in delete "+keyName);
+        
+       //remove from list 
+       jedis.zrem(user.getEmail() + ":contactList", keyName);
+        //remove key      
+       jedis.del(user.getEmail() + ":" + keyName);
+        
     }
 
 }

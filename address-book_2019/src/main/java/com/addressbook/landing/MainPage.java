@@ -1,11 +1,11 @@
 package com.addressbook.landing;
 
-import org.apache.wicket.Page;
+
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.feedback.FeedbackMessage;
 import org.apache.wicket.markup.html.WebPage;
-import org.apache.wicket.markup.html.form.Form;
+
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
 
 import com.addressbook.errorhandling.ErrorFilter;
@@ -27,7 +27,7 @@ public class MainPage extends WebPage{
 		
 		add(errorFeedBackPanel);
 		add(succesFeedBackPanel);
-		
+		//sign up
 		add(new AjaxLink<String>("signUp") {
 
 			/**
@@ -41,7 +41,7 @@ public class MainPage extends WebPage{
 				setResponsePage(SignUp.class);
 			}
 		});
-		
+		//login button
 		add(new AjaxLink<String>("LogIn") {
 
 			/**
@@ -55,9 +55,6 @@ public class MainPage extends WebPage{
 				setResponsePage(LoginPage.class);
 			}
 		});
-		
-		
-		
 		
 	}
 

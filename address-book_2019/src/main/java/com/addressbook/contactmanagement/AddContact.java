@@ -65,7 +65,7 @@ public class AddContact extends WebPage{
 
 		setDefaultModel(new CompoundPropertyModel(new LoadableDetachableModel() {
             protected Object load() {
-            	System.out.println("inside load");
+            	
                 return cPersonImpl.getEmptyPerson();
             }
         }));
@@ -91,7 +91,7 @@ public class AddContact extends WebPage{
 		@SuppressWarnings("unchecked")
 		public AddContactForm(String id, IModel model) {
 			super(id, model);
-			System.out.println("in form");
+			
 			
 			TextField< String> name=new RequiredTextField<>("namePerson");
 			name.add(new UserNameValidator());
@@ -120,18 +120,18 @@ public class AddContact extends WebPage{
 			
 			 add(new Button("add") {
 		        	public void onSubmit() {
-		        		System.out.println("inside submit");
+		        		
 		                ContactPerson c = (ContactPerson) getForm().getModelObject();
 		                boolean temp=cPersonImpl.saveContact(user,c);
-		                System.out.println(temp);
+		              
 		                if (temp) {
 		                	info("Saved Successfully");
 		                	succesFeedBackPanel.getFeedbackMessages().success(this, "Saved Successfully");
 		                	info("saved");
 						} else {
-							System.out.println("error caught");
-							error((IValidationError) new ValidationError().addKey("userNotFound"));
-							LOGGER.info("userNotFound");
+							
+							error("User cannot be saved");
+							LOGGER.info("User cannot be saved");
 
 						}
 		                
@@ -164,8 +164,7 @@ public class AddContact extends WebPage{
 			});
 		}
 
-	
-			
+
 			
 			
 	}

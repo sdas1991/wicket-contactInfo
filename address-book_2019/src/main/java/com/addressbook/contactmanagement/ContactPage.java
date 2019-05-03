@@ -52,6 +52,8 @@ public class ContactPage extends WebPage{
 		
 		add(errorFeedBackPanel);
 		add(succesFeedBackPanel);
+		
+		//show modal window
 		modalWindow=new ModalWindow("modalWindow");
 		
         final String searchString = params.get("searchString").toString();
@@ -66,6 +68,7 @@ public class ContactPage extends WebPage{
 				
             	ContactPersonImpl cmpl=new ContactPersonImpl();
             	User user=UserSession.getInstance().getUser();
+            	
                 return cmpl.getPerson(user,searchString);
             }
         };
@@ -90,6 +93,7 @@ public class ContactPage extends WebPage{
 			@Override
 			public void onClose(AjaxRequestTarget target) {
 				// TODO Auto-generated method stub
+				setResponsePage(ResponsePage.class);
 				
 			}
 		});
@@ -169,6 +173,7 @@ public class ContactPage extends WebPage{
         view.add(new Label("phone", new PropertyModel<>(person, "phoneNumber")));
         view.add(new Label("email", new PropertyModel<>(person, "emailAdd")));
         item.add(view);
+        
         
            
         

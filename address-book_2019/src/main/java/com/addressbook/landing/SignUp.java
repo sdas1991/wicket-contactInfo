@@ -19,6 +19,7 @@ import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.validation.IValidationError;
 import org.apache.wicket.validation.ValidationError;
 import org.apache.wicket.validation.validator.EmailAddressValidator;
+import org.apache.wicket.validation.validator.StringValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -78,16 +79,15 @@ public class SignUp extends WebPage{
 		@SuppressWarnings({ "unchecked", "rawtypes" })
 		public SignUpForm(String id, IModel model) {
 			super(id, model);
-			
-			
-			
+						
 			TextField email=new TextField("emailId");
 			//Validate Email
 			email.add(EmailAddressValidator.getInstance());
+			email.add(StringValidator.maximumLength(150));
 			add(email);
 			
 			final PasswordTextField password = new PasswordTextField("password");
-			
+			//custom password validator
 			password.add(new PasswordValidator());
 			
 			final PasswordTextField cpassword = new PasswordTextField("cpassword",
@@ -97,6 +97,8 @@ public class SignUp extends WebPage{
 			add(password);
 			add(cpassword);
 			add(new EqualPasswordInputValidator(password, cpassword));
+			
+			//add form button
 			addButton();
 			
 			
@@ -124,9 +126,10 @@ public class SignUp extends WebPage{
 						PageParameters pageParameters = new PageParameters();
 						pageParameters.add("email", user.getEmail());
 						
+						//on successful signup
 						setResponsePage(ResponsePage.class, pageParameters);
 					}else {
-						error((IValidationError) new ValidationError().addKey("userNotStored"));
+						error("User Not Saved");
 						LOGGER.info("userNotStored");
 					}
 					
